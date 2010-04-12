@@ -4,3 +4,17 @@ They may be useful for you too...
 
 sole
 http://soledadpenades.com
+
+~~~
+
+Old style 'table' of contents:
+
++ audio
+|
++-- generate_noise_test_python - create a wav file with 300 seconds of noise in python
+|
++-- wav2ogg - encode all .wav files in current directory to .ogg
+|
++ utils
+|
++-- screenshots - take periodical screenshots of your desktop
