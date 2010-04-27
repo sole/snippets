@@ -18,3 +18,5 @@ Old style 'table' of contents:
 + utils
 |
 +-- screenshots - take periodical screenshots of your desktop
+|
++-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
