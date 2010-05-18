@@ -17,6 +17,8 @@ Old style 'table' of contents:
 |
 + utils
 |
++-- image_convert - image conversions. Currently only png2jpg, more to come I guess...
+|
 +-- screenshots - take periodical screenshots of your desktop
 |
 +-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
