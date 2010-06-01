@@ -9,6 +9,10 @@ http://soledadpenades.com
 
 Old style 'table' of contents:
 
++ algorithms
+|
++-- custom_sort.py - sort by any object property using lambda functions
+|
 + audio
 |
 +-- generate_noise_test_python - create a wav file with 300 seconds of noise in python
@@ -22,3 +26,6 @@ Old style 'table' of contents:
 +-- screenshots - take periodical screenshots of your desktop
 |
 +-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
++ web
+|
++-- fix_entities - converts (some) html entities to its UTF8 counterparts
