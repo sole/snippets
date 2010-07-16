@@ -29,3 +29,5 @@ Old style 'table' of contents:
 + web
 |
 +-- fix_entities - converts (some) html entities to its UTF8 counterparts
+|
++-- unicode_table - builds a unicode table so that you can see what available signs are there. Useful for creating silly smileys in Twitter et al.
