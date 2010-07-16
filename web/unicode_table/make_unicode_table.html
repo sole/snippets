@@ -1,0 +1,48 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+	<head> 
+		<meta charset="utf-8"> 
+		<title>unicode table</title>
+	</head>
+	<body>
+	
+	<p>A javascript generated unicode table will appear below this text.</p>
+
+	
+	<script type="text/javascript">
+		window.onload = function() {
+			var t = document.createElement('table');
+			document.body.appendChild(t);
+			
+			var row_length = 20;
+			var cell_count = 0;
+			var tr;
+			for(var i = 0; i < 10000; i++) {
+				if(cell_count == 0) {
+					tr = t.insertRow(-1);
+				}
+				var tdCode = tr.insertCell(-1);
+				tdCode.className = 'code';
+				//var textCode = document.createTextNode(i);
+				//tdCode.appendChild(textCode);
+				tdCode.innerHTML = i;
+				
+				var tdChar = tr.insertCell(-1);
+				tdChar.className = 'char';
+				tdChar.innerHTML = '&#' + i + ';';
+				
+				cell_count++;
+				if(cell_count % row_length == 0) {
+					cell_count = 0;
+				}
+			}
+		}
+	</script>
+	
+	<style type="text/css">
+		table { border: 1px solid #ccc; border-collapse: collapse; }
+		td { padding: 5px 3px; border: 1px dotted #ddd; border-width: 0px 1px 2px 0px; border-bottom-style: solid; }
+		tr:nth-child(even) { background: #f8f8f8; }
+	<style>
+	</body>
+</html>
