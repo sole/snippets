@@ -19,13 +19,24 @@ Old style 'table' of contents:
 |
 +-- wav2ogg - encode all .wav files in current directory to .ogg
 |
++ psp
+|
++-- log_buttons - dump button presses and other events (uses SDL)
+|
 + utils
+|
++-- filesystem_manipulation
+|
++---- split_files_into_folders_by_letter.py - organise files into folders using their first letter
+|
++---- zip_folder.py - zip a series of files with python, using zipfile
 |
 +-- image_convert - image conversions. Currently only png2jpg, more to come I guess...
 |
 +-- screenshots - take periodical screenshots of your desktop
 |
 +-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
+|
 + web
 |
 +-- fix_entities - converts (some) html entities to its UTF8 counterparts
