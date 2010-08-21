@@ -41,4 +41,14 @@ Old style 'table' of contents:
 |
 +-- fix_entities - converts (some) html entities to its UTF8 counterparts
 |
++-- scrapping
+|
++---- countries_list - builds a list of countries with their codes and domains using hpricot + Wikipedia's data
+|
++---- delicious_dump_parse - parse a delicious bookmarks export file with hpricot
+|
++---- hexif - build a list of EXIF tags by scrapping them from a website
+|
++-- superminigallery - simple script for creating static image galleries
+|
 +-- unicode_table - builds a unicode table so that you can see what available signs are there. Useful for creating silly smileys in Twitter et al.
