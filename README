@@ -19,6 +19,16 @@ Old style 'table' of contents:
 |
 +-- wav2ogg - encode all .wav files in current directory to .ogg
 |
++ database
+|
++-- db_import - php+mysql tool for renaming/importing database tables and field names
+|
++-- tables2utf8 - SQL for converting badly encoded utf8 data into real utf8 data (for WordPress but can be adapted to other applications)
+|
++ gimp
+|
++-- generate_bitmap_font - gimp plug-in
+|
 + psp
 |
 +-- log_buttons - dump button presses and other events (uses SDL)
