@@ -27,6 +27,10 @@ Old style 'table' of contents:
 |
 +-- tables2utf8 - SQL for converting badly encoded utf8 data into real utf8 data (for WordPress but can be adapted to other applications)
 |
++ gps
+|
++-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
+|
 + gimp
 |
 +-- generate_bitmap_font - gimp plug-in
