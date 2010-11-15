@@ -18,6 +18,8 @@ def parse_args():
 
 	parser.add_argument('--realtime', help='Tries to replay using real time intervals (from metadata in each Placemark). If enabled, takes precedence over the interval value', action='store_const', const=True, default=False)
 
+	parser.add_argument('--start_with', type=int, help='Start at coordinate point', default=0)
+
 	parser.add_argument('--swap', help='Swap latitude and longitude values.', action='store_const', const=True, default=False)
 	
 	return parser.parse_args()
@@ -29,7 +31,7 @@ def run(args):
 
 	xml = parseString(kml_data)
 	tn = telnetlib.Telnet('localhost', args.port)
-	i = 1
+	i = 0
 	d0 = None
 	interval = 0
 	realtime = args.realtime
@@ -39,40 +41,42 @@ def run(args):
 		
 	for placemark in placemarks:
 
-		coordinates = placemark.getElementsByTagName('coordinates')
-		if coordinates is None:
-			continue
-					
-		triad = coordinates[0].childNodes[0].nodeValue.split(',')
-		if args.swap:
-			triad[0], triad[1] = triad[1], triad[0]
-		geo_cmd = ('geo fix ' + (' '.join(triad))).encode('latin-1')
+		if i >= args.start_with:
 
-		if realtime:	
-			description = placemark.getElementsByTagName('description')
-
-			if description is None:
+			coordinates = placemark.getElementsByTagName('coordinates')
+			if coordinates is None:
 				continue
+						
+			triad = coordinates[0].childNodes[0].nodeValue.split(',')
+			if args.swap:
+				triad[0], triad[1] = triad[1], triad[0]
+			geo_cmd = ('geo fix ' + (' '.join(triad))).encode('latin-1')
 
-			description = description[0].childNodes[0].nodeValue
-			fix_type, timestamp, accuracy = description.split(':')
-			d = datetime.strptime(timestamp, '%Y%m%d_%H%M%S')
+			if realtime:	
+				description = placemark.getElementsByTagName('description')
+
+				if description is None:
+					continue
+
+				description = description[0].childNodes[0].nodeValue
+				fix_type, timestamp, accuracy = description.split(':')
+				d = datetime.strptime(timestamp, '%Y%m%d_%H%M%S')
+			
+				if d0 is not None:
+					diff = d - d0
+					interval = (diff.microseconds + (diff.seconds + diff.days * 24 * 3600) * 10**6) / 10**6 
+					print 'difference', diff, interval
+
+				d0 = d
+
+			else:
+				if i >= 1:
+					interval = args.interval
 		
-			if d0 is not None:
-				diff = d - d0
-				interval = (diff.microseconds + (diff.seconds + diff.days * 24 * 3600) * 10**6) / 10**6 
-				print 'difference', diff, interval
+			time.sleep(interval)
 
-			d0 = d
-
-		else:
-			if i > 1:
-				interval = args.interval
-	
-		time.sleep(interval)
-
-		print i, geo_cmd
-		tn.write(geo_cmd + "\r\n")
+			print (i+1), geo_cmd
+			tn.write(geo_cmd + "\r\n")
 
 		i = i + 1
 
