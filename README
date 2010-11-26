@@ -15,6 +15,10 @@ Old style 'table' of contents:
 |
 +-- gcd_euclidean.java - find greatest common divisor by the Euclidean algorithm
 |
++ android
+|
++-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
+|
 + audio
 |
 +-- generate_noise_test_python - create a wav file with 300 seconds of noise in python
@@ -30,10 +34,6 @@ Old style 'table' of contents:
 + gimp
 |
 +-- generate_bitmap_font - gimp plug-in
-|
-+ gps
-|
-+-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
 |
 + psp
 |
