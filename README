@@ -17,6 +17,8 @@ Old style 'table' of contents:
 |
 + android
 |
++-- build_drawables - build drawables in different resolutions, using SVG inputs + inkscape
+|
 +-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
 |
 + audio
