@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# To install: copy THIS FILE to your ~/.gimp/plug-ins directory and restart the Gimp
+# E.g. /home/maria/.gimp-2.6/plug-ins
+# DO NOT place it in a subdirectory (e.g. ~/.gimp-2.6/generate_bitmap/generate.py)
+# or The Gimp won't find it
+
 import math
 from gimpfu import *
 
