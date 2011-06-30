@@ -65,7 +65,7 @@ Old style 'table' of contents:
 |
 + web
 |
-+-- fix_entities - converts (some) html entities to its UTF8 counterparts
++-- fix_entities - converts (some) html entities to their UTF8 counterparts
 |
 +-- scrapping
 |
