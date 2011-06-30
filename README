@@ -19,7 +19,7 @@ Old style 'table' of contents:
 |
 +-- build_drawables - build drawables in different resolutions, using SVG inputs + inkscape
 |
-+-- file_explorer - an ADB based file explorer. Useful for Honeycomb systems without no massive storage mode.
++-- file_explorer - an ADB based file explorer. Useful for Honeycomb systems without massive storage mode.
 |
 +-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
 |
