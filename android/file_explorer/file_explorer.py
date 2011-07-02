@@ -8,7 +8,6 @@ file_explorer --copy_from_computer ./local_files --copy_to_device /mnt/sdcard/de
 
 """
 
-
 def parse_args():
 
 	parser = argparse.ArgumentParser(description='Read/write files from/to Android devices via ADB')
