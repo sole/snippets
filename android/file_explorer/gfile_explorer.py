@@ -19,29 +19,22 @@ class GFileExplorer:
         # Host and device panels
         # They're inside an HBox (which is inside the topmost VBox)
         self.h_box = gtk.HBox(False, 0)
-        self.h_box.show()
         self.v_box.pack_start(self.h_box, True, True, 0)
         
         self.host_file_chooser = gtk.FileChooserWidget()
-        self.host_file_chooser.show()
         self.host_file_chooser.set_select_multiple(True)
         self.h_box.pack_start(self.host_file_chooser)
 
         # Status
         self.status_frame = gtk.Frame("Status")
-        self.status_frame.show()
         
         self.status_text = gtk.TextView()
         self.status_text.set_editable(False)
-        self.status_text.show()
         self.status_frame.add(self.status_text)
         
         self.v_box.pack_start(self.status_frame, True, True, 0)
 
-
-        self.v_box.show()
-
-        self.window.show()
+        self.window.show_all()
 
         self.output("Ready")
 
