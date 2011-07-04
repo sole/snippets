@@ -104,7 +104,7 @@ class GFileExplorer:
 		
 		self.host_tree_view_file = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
 		hostVBox.pack_start(self.host_tree_view_file.getView())
-		
+		self.host_tree_view_file.getTree().connect('row-activated', self.host_navigate_callback)
 		self.h_box.pack_start(hostVBox)
 
 		# Copy buttons
@@ -133,7 +133,7 @@ class GFileExplorer:
 
 		self.progress_bar = gtk.ProgressBar()
 		self.v_box.pack_start(self.progress_bar, expand=False, fill=False)
-
+		self.device_tree_view_file.getTree().connect('row-activated', self.device_navigate_callback)
 		self.window.show_all()
 
 
@@ -201,6 +201,9 @@ class GFileExplorer:
 			output.append({'directory': False, 'name': f, 'size': size})
 
 		return output
+
+	# The 'tasks' in the following functions are so that the GUI keeps
+	# being updated, even if we're 'blocking' when copying files
 
 	def copy_to_device_callback(self, widget, data=None):
 		model, rows = self.host_tree_view_file.getTree().get_selection().get_selected_rows()
@@ -276,6 +279,30 @@ class GFileExplorer:
 		if value >= 1:
 			self.progress_bar.set_text("Done")
 			self.progress_bar.set_fraction(0)
+	
+	def host_navigate_callback(self, widget, path, view_column):
+		
+		row = path[0]
+		model = widget.get_model()
+		iter = model.get_iter(row)
+		is_dir = model.get_value(iter, 0)
+		name = model.get_value(iter, 1)
+
+		if is_dir:
+			self.host_cwd = os.path.normpath(os.path.join(self.host_cwd, name))
+			self.refreshHostFiles()
+
+	def device_navigate_callback(self, widget, path, view_column):
+
+		row = path[0]
+		model = widget.get_model()
+		iter = model.get_iter(row)
+		is_dir = model.get_value(iter, 0)
+		name = model.get_value(iter, 1)
+
+		if is_dir:
+			self.device_cwd = os.path.normpath(os.path.join(self.device_cwd, name))
+			self.refreshDeviceFiles()
 
 	def die_callback(self, widget, data=None):
 		self.destroy(widget, data)
