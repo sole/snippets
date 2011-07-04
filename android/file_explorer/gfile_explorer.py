@@ -43,6 +43,7 @@ class TreeViewFile:
         size_col_renderer = gtk.CellRendererText()
         size_col.pack_start(size_col_renderer, expand=True)
         size_col.add_attribute(size_col_renderer, 'text', 2)
+        size_col.set_sort_column_id(2)
 
 
         
