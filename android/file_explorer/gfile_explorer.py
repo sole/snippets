@@ -63,6 +63,9 @@ class TreeViewFile:
 	def getView(self):
 		return self.scrolled_window
 
+	def getTree(self):
+		return self.tree_view
+
 
 	def loadData(self, data):
 		self.tree_store.clear()
@@ -141,10 +144,19 @@ class GFileExplorer:
 
 		self.output("Ready")
 
+		self.adb = 'adb'
+
 		self.host_cwd = os.getcwd()
 		self.device_cwd = '/mnt/sdcard/'
 
+		self.refreshHostFiles()
+		self.refreshDeviceFiles()
+
+
+	def refreshHostFiles(self):
 		self.host_tree_view_file.loadData(self.dirScanHost(self.host_cwd))
+
+	def refreshDeviceFiles(self):
 		self.device_tree_view_file.loadData(self.dirScanDevice(self.device_cwd))
 
 	""" Walks through a directory and return the data in a tree-style list 
@@ -172,7 +184,7 @@ class GFileExplorer:
 	def dirScanDevice(self, directory):
 		output = []
 		
-		entries = file_explorer.parse_device_list(file_explorer.device_list('adb', directory))
+		entries = file_explorer.parse_device_list(file_explorer.device_list(self.adb, directory))
 
 		dirs = []
 		files = []
@@ -201,7 +213,18 @@ class GFileExplorer:
 		print 'copy to device'
 	
 	def copy_from_device_callback(self, widget, data=None):
-		print 'copy from device'
+		model, rows = self.device_tree_view_file.getTree().get_selection().get_selected_rows()
+
+		for row in rows:
+			iter = model.get_iter(row)
+			filename = model.get_value(iter, 1)
+			full_device_path = os.path.join(self.device_cwd, filename)
+			full_host_path = os.path.join(self.host_cwd, filename)
+
+			file_explorer.action_copy_from_device(self.adb, full_device_path, full_host_path)
+			self.refreshHostFiles()
+		
+
 
 	def output(self, text):
 		buffer = self.status_text.get_buffer()
