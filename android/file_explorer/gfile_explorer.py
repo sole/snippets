@@ -138,6 +138,8 @@ class GFileExplorer:
         dirs.sort()
         files.sort()
 
+        output.append({'directory': True, 'name': '..', 'size': 0})
+
         for d in dirs:
             output.append({'directory': True, 'name': d, 'size': 0})
 
