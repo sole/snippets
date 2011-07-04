@@ -131,18 +131,11 @@ class GFileExplorer:
 
 		self.h_box.pack_start(deviceVBox)
 
-		# Status
-		self.status_frame = gtk.Frame("Status")
-		
-		self.status_text = gtk.TextView()
-		self.status_text.set_editable(False)
-		self.status_frame.add(self.status_text)
-		
-		self.v_box.pack_start(self.status_frame, True, True, 0)
+		self.progress_bar = gtk.ProgressBar()
+		self.v_box.pack_start(self.progress_bar, expand=False, fill=False)
 
 		self.window.show_all()
 
-		self.output("Ready")
 
 		self.adb = 'adb'
 
@@ -228,21 +221,43 @@ class GFileExplorer:
 	def copy_from_device_callback(self, widget, data=None):
 		model, rows = self.device_tree_view_file.getTree().get_selection().get_selected_rows()
 
-		for row in rows:
+		task = self.copy_from_device_task(model, rows)
+		gobject.idle_add(task.next)
+
+	def copy_from_device_task(self, model, rows):
+		completed = 0
+		total = len(rows)
+
+		self.update_progress()
+
+		while completed < total:
+			row = rows[completed]
 			iter = model.get_iter(row)
 			filename = model.get_value(iter, 1)
 			full_device_path = os.path.join(self.device_cwd, filename)
 			full_host_path = os.path.join(self.host_cwd, filename)
-
 			file_explorer.action_copy_from_device(self.adb, full_device_path, full_host_path)
+			completed = completed + 1
 			self.refreshHostFiles()
-		
+			self.update_progress(completed * 1.0 / total)
 
+			yield True
 
-	def output(self, text):
-		buffer = self.status_text.get_buffer()
-		buffer.set_text(text)
-		self.status_text.set_buffer(buffer)
+		yield False
+
+	def update_progress(self, value = None):
+		if value is None:
+			self.progress_bar.set_fraction(0)
+			self.progress_bar.set_text("")
+			self.progress_bar.pulse()
+		else:
+			self.progress_bar.set_fraction(value)
+
+			self.progress_bar.set_text("%d%%" % (value * 100))
+
+		if value >= 1:
+			self.progress_bar.set_text("Done")
+			self.progress_bar.set_fraction(0)
 
 	def die_callback(self, widget, data=None):
 		self.destroy(widget, data)
