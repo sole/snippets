@@ -87,12 +87,28 @@ class GFileExplorer:
         # They're inside an HBox (which is inside the topmost VBox)
         self.h_box = gtk.HBox(False, 0)
         self.v_box.pack_start(self.h_box, True, True, 0)
-
+        
+        # host
+        hostVBox = gtk.VBox(False, 0)
+        
+        hostLabel = gtk.Label('Host')
+        hostVBox.pack_start(hostLabel, expand=False, fill=False)
+        
         self.host_tree_view_file = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
-        self.h_box.pack_start(self.host_tree_view_file.getView())
+        hostVBox.pack_start(self.host_tree_view_file.getView())
+        
+        self.h_box.pack_start(hostVBox)
+
+        # device
+        deviceVBox = gtk.VBox(False, 0)
+
+        deviceLabel = gtk.Label('Device')
+        deviceVBox.pack_start(deviceLabel, expand=False, fill=False)
 
         self.device_tree_view_file = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
-        self.h_box.pack_start(self.device_tree_view_file.getView())
+        deviceVBox.pack_start(self.device_tree_view_file.getView())
+
+        self.h_box.pack_start(deviceVBox)
 
         # Status
         self.status_frame = gtk.Frame("Status")
