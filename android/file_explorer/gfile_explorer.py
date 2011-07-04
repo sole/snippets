@@ -205,7 +205,18 @@ class GFileExplorer:
 	def copy_to_device_callback(self, widget, data=None):
 		model, rows = self.host_tree_view_file.getTree().get_selection().get_selected_rows()
 
-		for row in rows:
+		task = self.copy_to_device_task(model, rows)
+		gobject.idle_add(task.next)
+
+	
+	def copy_to_device_task(self, model, rows):
+		completed = 0
+		total = len(rows)
+
+		self.update_progress()
+
+		while completed < total:
+			row = rows[completed]
 			iter = model.get_iter(row)
 			filename = model.get_value(iter, 1)
 			full_host_path = os.path.join(self.host_cwd, filename)
@@ -216,7 +227,14 @@ class GFileExplorer:
 				full_device_path = os.path.join(self.device_cwd, filename)
 
 			file_explorer.action_copy_from_host(self.adb, full_host_path, full_device_path)
+			completed = completed + 1
 			self.refreshDeviceFiles()
+			self.update_progress(completed * 1.0 / total)
+
+			yield True
+
+		yield False
+
 	
 	def copy_from_device_callback(self, widget, data=None):
 		model, rows = self.device_tree_view_file.getTree().get_selection().get_selected_rows()
