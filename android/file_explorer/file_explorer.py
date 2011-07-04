@@ -3,6 +3,7 @@ import subprocess
 import argparse
 import time
 import sys
+import re
 
 """
 
@@ -17,7 +18,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Read/write files from/to Android devices via ADB')
 
 	parser.add_argument('--adb', help="Location of adb binary", default='adb', metavar='/path/to/the/adb/executable')
-	parser.add_argument('--device-list', help="List device files", default=False, action='store_const', const=True, dest='device_list')
+	parser.add_argument('--device-list', help="List device files in dir", default=False, dest='device_list', metavar='/path/to/dir/in/device')
 	parser.add_argument('--copy-from-device', help='Copy a file (or directory) from the device', default=False, metavar='/path/to/source/in/device', dest='copy_from_device')
 	parser.add_argument('--copy-to-host', help='When used with --copy_from_device, specifies where to copy files', default='.', metavar='/path/to/destination/in/host', dest='copy_to_host')
 	parser.add_argument('--copy-from-host', help='Copy a file (or directory) from the host to the device', default=False, metavar='/path/to/source/in/host', dest='copy_from_host')
@@ -56,26 +57,28 @@ def device_list(adb, device_dir):
 def parse_device_list(lines):
 
 	entries = {}
+	pattern = re.compile(r"^(?P<permissions>[drwx\-]+) (?P<owner>\w+)\W+(?P<group>[\w_]+)\W*(?P<size>\d+)?\W+(?P<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}) (?P<name>.+)$")
 
 	for line in lines:
 		line = line.rstrip()
+		match = pattern.match(line)
+		
+		if match:
+			permissions = match.group('permissions')
+			owner = match.group('owner')
+			group = match.group('group')
+			fsize = match.group('size')
+			if fsize is None:
+				fsize = 0
+			filename = match.group('name')
+			timestamp = time.mktime((time.strptime(match.group('datetime'), "%Y-%m-%d %H:%M")))
+			
+			is_directory = permissions.startswith('d')
 
-		parts = line.split(None, 6)
+			entries[filename] = { 'is_directory': is_directory, 'size': fsize, 'timestamp': timestamp }
 
-		if len(parts) == 6:
-			# Directories don't report their size
-			permissions, owner, group, mdate, mtime, filename = parts
-			fsize = 0
-
-		elif len(parts) == 7:
-			permissions, owner, group, fsize, mdate, mtime, filename = parts
-
-		is_directory = permissions.startswith('d')
-		timestamp = time.mktime((time.strptime(mdate + ' ' + mtime, "%Y-%m-%d %H:%M")))
-
-		entries[filename] = { 'is_directory': is_directory, 'size': fsize, 'timestamp': timestamp }
-
-
+		else:
+			print "NOT MATCHED!!!!"
 
 	return entries
 
