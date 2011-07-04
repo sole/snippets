@@ -204,7 +204,7 @@ class GFileExplorer:
 			output.append({'directory': True, 'name': d, 'size': 0})
 
 		for f in files:
-			size = entries[f]['size']
+			size = int(entries[f]['size'])
 			output.append({'directory': False, 'name': f, 'size': size})
 
 		return output
@@ -216,7 +216,11 @@ class GFileExplorer:
 			iter = model.get_iter(row)
 			filename = model.get_value(iter, 1)
 			full_host_path = os.path.join(self.host_cwd, filename)
-			full_device_path = os.path.join(self.device_cwd, filename)
+
+			if os.path.isfile(full_host_path):
+				full_device_path = self.device_cwd
+			else:
+				full_device_path = os.path.join(self.device_cwd, filename)
 
 			file_explorer.action_copy_from_host(self.adb, full_host_path, full_device_path)
 			self.refreshDeviceFiles()
