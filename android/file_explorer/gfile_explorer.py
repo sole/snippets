@@ -210,7 +210,16 @@ class GFileExplorer:
 		return output
 
 	def copy_to_device_callback(self, widget, data=None):
-		print 'copy to device'
+		model, rows = self.host_tree_view_file.getTree().get_selection().get_selected_rows()
+
+		for row in rows:
+			iter = model.get_iter(row)
+			filename = model.get_value(iter, 1)
+			full_host_path = os.path.join(self.host_cwd, filename)
+			full_device_path = os.path.join(self.device_cwd, filename)
+
+			file_explorer.action_copy_from_host(self.adb, full_host_path, full_device_path)
+			self.refreshDeviceFiles()
 	
 	def copy_from_device_callback(self, widget, data=None):
 		model, rows = self.device_tree_view_file.getTree().get_selection().get_selected_rows()
