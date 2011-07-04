@@ -103,6 +103,19 @@ class GFileExplorer:
 		
 		self.h_box.pack_start(hostVBox)
 
+		# Copy buttons
+		buttonsVBox = gtk.VBox(False, 0)
+		self.h_box.pack_start(buttonsVBox, expand=False, fill=False)
+
+		self.btnCopyToDevice = gtk.Button("->")
+		self.btnCopyFromDevice = gtk.Button("<-")
+
+		buttonsVBox.pack_start(self.btnCopyToDevice, expand=False, fill=False)
+		buttonsVBox.pack_start(self.btnCopyFromDevice, expand=False, fill=False)
+
+		self.btnCopyToDevice.connect('clicked', self.copy_to_device_callback, None)
+		self.btnCopyFromDevice.connect('clicked', self.copy_from_device_callback, None)
+
 		# device
 		deviceVBox = gtk.VBox(False, 0)
 
@@ -183,7 +196,11 @@ class GFileExplorer:
 
 		return output
 
+	def copy_to_device_callback(self, widget, data=None):
+		print 'copy to device'
 	
+	def copy_from_device_callback(self, widget, data=None):
+		print 'copy from device'
 
 	def output(self, text):
 		buffer = self.status_text.get_buffer()
