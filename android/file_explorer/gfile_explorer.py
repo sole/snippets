@@ -77,6 +77,7 @@ class TreeViewFile:
 
 class GFileExplorer:
 	def __init__(self):
+		basedir = os.path.dirname(os.path.abspath(__file__))
 		self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 		self.window.set_border_width(10)
 		self.window.set_size_request(640, 480)
@@ -87,9 +88,9 @@ class GFileExplorer:
 		self.window.add(self.v_box)
 
 		imageDir = gtk.Image()
-		imageDir.set_from_file('./icons/folder.png')
+		imageDir.set_from_file(os.path.join(basedir, 'icons/folder.png'))
 		imageFile = gtk.Image()
-		imageFile.set_from_file('./icons/file.png')
+		imageFile.set_from_file(os.path.join(basedir, './icons/file.png'))
 
 		# Host and device panels, and copy buttons
 		# They're inside an HBox (which is inside the topmost VBox)
