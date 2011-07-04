@@ -17,6 +17,7 @@ class TreeViewFile:
 		# added in loadData
 		self.tree_store = gtk.TreeStore(gobject.TYPE_BOOLEAN, str, int)
 		self.tree_view = gtk.TreeView(self.tree_store)
+		self.tree_view.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 		self.scrolled_window = gtk.ScrolledWindow()
 		self.scrolled_window.add_with_viewport(self.tree_view)
 		
@@ -87,7 +88,7 @@ class GFileExplorer:
 		imageFile = gtk.Image()
 		imageFile.set_from_file('./icons/file.png')
 
-		# Host and device panels
+		# Host and device panels, and copy buttons
 		# They're inside an HBox (which is inside the topmost VBox)
 		self.h_box = gtk.HBox(False, 0)
 		self.v_box.pack_start(self.h_box, True, True, 0)
