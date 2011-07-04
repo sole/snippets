@@ -136,6 +136,8 @@ class GFileExplorer:
 		self.device_tree_view_file.getTree().connect('row-activated', self.device_navigate_callback)
 		self.window.show_all()
 
+		self.window.set_title("Android file explorer")
+
 
 		self.adb = 'adb'
 
