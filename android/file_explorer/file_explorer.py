@@ -129,6 +129,11 @@ def action_copy_from_device(adb, device_file, host_directory):
 		command = '%s pull "%s" "%s"' % (adb, device_file, host_file)
 		execute(command)
 
+def action_device_make_directory(adb, device_directory):
+	command = '%s shell mkdir "%s" ' % (adb, device_directory )
+	execute(command)
+
+
 def action_copy_from_host(adb, host_file, device_directory):
 	print "-------"
 	print "COPY FROM HOST:", host_file, "=>", device_directory
@@ -148,9 +153,7 @@ def action_copy_from_host(adb, host_file, device_directory):
 
 	if not parent_device_entries.has_key(dst_basename):
 		print "hop", dst_basename, dst_parent_dir
-		command = '%s shell mkdir "%s" ' % (adb, device_directory )
-		execute(command)
-
+		self.action_device_make_directory(adb, device_directory)
 	elif not parent_device_entries[dst_basename]['is_directory']:
 		print "ERROR", device_directory, "is a file, not a directory"
 		return
