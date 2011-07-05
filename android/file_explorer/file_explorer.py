@@ -133,7 +133,6 @@ def action_device_make_directory(adb, device_directory):
 	command = '%s shell mkdir "%s" ' % (adb, device_directory )
 	execute(command)
 
-
 def action_copy_from_host(adb, host_file, device_directory):
 	print "-------"
 	print "COPY FROM HOST:", host_file, "=>", device_directory
@@ -179,6 +178,10 @@ def action_copy_from_host(adb, host_file, device_directory):
 
 		for entry in entries:
 			action_copy_from_host(adb, os.path.join(host_file, entry), os.path.join(device_directory, os.path.basename(host_file)))
+
+def action_device_delete_item(adb, path):
+	print 'deleting', path
+
 
 # ~~~
 

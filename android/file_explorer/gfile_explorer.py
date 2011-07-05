@@ -110,6 +110,8 @@ class GFileExplorer:
 		# Device specific buttons
 		btnDeviceCreateDirectory = builder.get_object('btnDeviceCreateDirectory')
 		btnDeviceCreateDirectory.connect('clicked', self.device_create_directory_callback, None)
+		btnDeviceDeleteItem = builder.get_object('btnDeviceDeleteItem')
+		btnDeviceDeleteItem.connect('clicked', self.device_delete_item_callback, None)
 
 		# Progress bar
 		self.progress_bar = builder.get_object('progressBar')
@@ -285,6 +287,45 @@ class GFileExplorer:
 		if is_dir:
 			self.device_cwd = os.path.normpath(os.path.join(self.device_cwd, name))
 			self.refreshDeviceFiles()
+	
+	
+	def device_delete_item_callback(self, widget, data=None):
+		model, rows = self.device_treeViewFile.getTree().get_selection().get_selected_rows()
+		print 'delete', len(rows)
+
+		if len(rows) > 0:
+			items = []
+			for r in rows:
+				iter = model.get_iter(r)
+				filename = model.get_value(iter, 1)
+				items.append(filename)
+
+			result = self.dialog_device_delete_confirmation(items)
+	
+	def dialog_device_delete_confirmation(self, items):
+		items.sort()
+		joined = ', '.join(items)
+		print joined
+		dialog = gtk.MessageDialog(
+			parent = None,
+			flags = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+			type = gtk.MESSAGE_QUESTION,
+			buttons = gtk.BUTTONS_OK_CANCEL,
+			message_format = "Are you sure you want to delete %d items?" % len(items)
+		)
+		dialog.format_secondary_markup('%s will be deleted. This action cannot be undone.' % joined)
+		dialog.show_all()
+		result = dialog.run()
+		
+		dialog.destroy()
+		
+		if result == gtk.RESPONSE_OK:
+			for item in items:
+				full_item_path = os.path.join(self.device_cwd, item)
+				file_explorer.action_device_delete_item(self.adb, full_item_path)
+		else:
+			print 'no no'
+		
 
 	def device_create_directory_callback(self, widget, data=None):
 		directory_name = self.dialog_get_directory_name()
