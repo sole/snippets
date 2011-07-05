@@ -129,7 +129,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="buttonDeviceCreateDirectory">
+                      <object class="GtkButton" id="btnDeviceCreateDirectory">
                         <property name="label" translatable="yes">Create directory</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
