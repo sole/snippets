@@ -49,7 +49,7 @@ def execute(command):
 
 def device_list(adb, device_dir):
 
-	command = "%s shell ls -l %s" % (adb, device_dir)
+	command = '%s shell ls -la "%s"' % (adb, device_dir)
 	lines = execute(command)
 	return lines
 
@@ -182,6 +182,21 @@ def action_copy_from_host(adb, host_file, device_directory):
 def action_device_delete_item(adb, path):
 	print 'deleting', path
 
+	if is_device_file_a_directory(adb, path):
+		entries = parse_device_list(device_list(adb, path))
+
+		for filename, entry in entries.iteritems():
+
+			entry_full_path = os.path.join(path, filename)
+			action_device_delete_item(adb, entry_full_path)
+
+		# finally delete the directory itself
+		command = '%s shell rmdir "%s"' % (adb, path)
+		execute(command)
+
+	else:
+		print "would delete", path, 'because its a file'
+		execute('%s shell rm "%s"' % (adb, path))
 
 # ~~~
 

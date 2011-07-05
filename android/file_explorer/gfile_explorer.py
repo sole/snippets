@@ -323,6 +323,7 @@ class GFileExplorer:
 			for item in items:
 				full_item_path = os.path.join(self.device_cwd, item)
 				file_explorer.action_device_delete_item(self.adb, full_item_path)
+				self.refreshDeviceFiles()
 		else:
 			print 'no no'
 		
