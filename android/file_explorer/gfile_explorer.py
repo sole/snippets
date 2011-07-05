@@ -77,83 +77,56 @@ class TreeViewFile:
 
 class GFileExplorer:
 	def __init__(self):
+		builder = gtk.Builder()
+		builder.add_from_file("interface.xml")
+		builder.connect_signals({ "on_window_destroy" : gtk.main_quit })
+		self.window = builder.get_object("window")
+
 		basedir = os.path.dirname(os.path.abspath(__file__))
-		self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-		self.window.set_border_width(10)
-		self.window.set_size_request(640, 480)
-
-		self.window.connect('destroy', self.destroy)
-
-		self.v_box = gtk.VBox(False, 0)
-		self.window.add(self.v_box)
 
 		imageDir = gtk.Image()
 		imageDir.set_from_file(os.path.join(basedir, 'icons/folder.png'))
 		imageFile = gtk.Image()
 		imageFile.set_from_file(os.path.join(basedir, './icons/file.png'))
 
-		# Host and device panels, and copy buttons
-		# They're inside an HBox (which is inside the topmost VBox)
-		self.h_box = gtk.HBox(False, 0)
-		self.v_box.pack_start(self.h_box, True, True, 0)
-		
-		# host
-		hostVBox = gtk.VBox(False, 0)
-		
-		hostLabel = gtk.Label('Host')
-		hostVBox.pack_start(hostLabel, expand=False, fill=False)
-		
-		self.host_tree_view_file = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
-		hostVBox.pack_start(self.host_tree_view_file.getView())
-		self.host_tree_view_file.getTree().connect('row-activated', self.host_navigate_callback)
-		self.h_box.pack_start(hostVBox)
+		# Host and device TreeViews
+		self.host_treeViewFile = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
+		self.host_treeViewFile.getTree().connect('row-activated', self.host_navigate_callback)
+		hostFrame = builder.get_object('frameHost')
+		hostFrame.get_child().add(self.host_treeViewFile.getView())
 
-		# Copy buttons
-		buttonsVBox = gtk.VBox(False, 0)
-		self.h_box.pack_start(buttonsVBox, expand=False, fill=False)
+		self.device_treeViewFile = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
+		self.device_treeViewFile.getTree().connect('row-activated', self.device_navigate_callback)
+		deviceFrame = builder.get_object('frameDevice')
+		deviceFrame.get_child().add(self.device_treeViewFile.getView())
 
-		self.btnCopyToDevice = gtk.Button("->")
-		self.btnCopyFromDevice = gtk.Button("<-")
+		# Copy from/to device buttons
+		btnCopyFromDevice = builder.get_object('btnCopyFromDevice')
+		btnCopyFromDevice.connect('clicked', self.copy_from_device_callback, None)
+		btnCopyToDevice = builder.get_object('btnCopyToDevice')
+		btnCopyToDevice.connect('clicked', self.copy_to_device_callback, None)
 
-		buttonsVBox.pack_start(self.btnCopyToDevice, expand=False, fill=False)
-		buttonsVBox.pack_start(self.btnCopyFromDevice, expand=False, fill=False)
+		# Progress bar
+		self.progress_bar = builder.get_object('progressBar')
 
-		self.btnCopyToDevice.connect('clicked', self.copy_to_device_callback, None)
-		self.btnCopyFromDevice.connect('clicked', self.copy_from_device_callback, None)
-
-		# device
-		deviceVBox = gtk.VBox(False, 0)
-
-		deviceLabel = gtk.Label('Device')
-		deviceVBox.pack_start(deviceLabel, expand=False, fill=False)
-
-		self.device_tree_view_file = TreeViewFile(imageDir.get_pixbuf(), imageFile.get_pixbuf())
-		deviceVBox.pack_start(self.device_tree_view_file.getView())
-
-		self.h_box.pack_start(deviceVBox)
-
-		self.progress_bar = gtk.ProgressBar()
-		self.v_box.pack_start(self.progress_bar, expand=False, fill=False)
-		self.device_tree_view_file.getTree().connect('row-activated', self.device_navigate_callback)
-		self.window.show_all()
-
+		# Some more subtle details...
 		self.window.set_title("Android file explorer")
-
-
 		self.adb = 'adb'
-
 		self.host_cwd = os.getcwd()
 		self.device_cwd = '/mnt/sdcard/'
 
 		self.refreshHostFiles()
 		self.refreshDeviceFiles()
 
+		# And we're done!
+		self.window.show_all()
+
 
 	def refreshHostFiles(self):
-		self.host_tree_view_file.loadData(self.dirScanHost(self.host_cwd))
+		self.host_treeViewFile.loadData(self.dirScanHost(self.host_cwd))
 
 	def refreshDeviceFiles(self):
-		self.device_tree_view_file.loadData(self.dirScanDevice(self.device_cwd))
+		self.device_treeViewFile.loadData(self.dirScanDevice(self.device_cwd))
 
 	""" Walks through a directory and return the data in a tree-style list 
 		that can be used by the TreeViewFile """
@@ -207,9 +180,10 @@ class GFileExplorer:
 
 	# The 'tasks' in the following functions are so that the GUI keeps
 	# being updated, even if we're 'blocking' when copying files
+	# See: http://stackoverflow.com/questions/496814/progress-bar-not-updating-during-operation 
 
 	def copy_to_device_callback(self, widget, data=None):
-		model, rows = self.host_tree_view_file.getTree().get_selection().get_selected_rows()
+		model, rows = self.host_treeViewFile.getTree().get_selection().get_selected_rows()
 
 		task = self.copy_to_device_task(model, rows)
 		gobject.idle_add(task.next)
@@ -243,7 +217,7 @@ class GFileExplorer:
 
 	
 	def copy_from_device_callback(self, widget, data=None):
-		model, rows = self.device_tree_view_file.getTree().get_selection().get_selected_rows()
+		model, rows = self.device_treeViewFile.getTree().get_selection().get_selected_rows()
 
 		task = self.copy_from_device_task(model, rows)
 		gobject.idle_add(task.next)

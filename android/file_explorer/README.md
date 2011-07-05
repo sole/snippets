@@ -10,3 +10,12 @@ The line above appends adb's path to whatever value $PATH held before. The path 
 Attributions
 
 Using FamFamFam icons
+
+TO DO
+
+- Refresh panels button
+- Delete entries (device side)
+- Create directories (device side)
+- Create a settings file (in ~/.file_explorer?), to store...
+	- path to adb
+	- last used directory
