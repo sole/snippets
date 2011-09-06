@@ -1,21 +1,3 @@
-Command line + GUI (GTK based) Android ADB-based file explorer
+This utility has now its own project and repository:
 
-If you don't want to be specifying the path to adb all the time, just add the path that contains its executable to your $PATH environment variable.
-For example, edit .bashrc and add it like this:
-
-	PATH=$PATH:~/Applications/android-sdk-linux_86/platform-tools
-
-The line above appends adb's path to whatever value $PATH held before. The path might be different, according to wherever you've installed the Android SDK.
-
-Attributions
-
-Using FamFamFam icons
-
-TO DO
-
-- Refresh panels button
-- Delete entries (device side)
-- Create directories (device side)
-- Create a settings file (in ~/.file_explorer?), to store...
-	- path to adb
-	- last used directory
+https://github.com/sole/aafm
