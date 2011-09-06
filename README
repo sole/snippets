@@ -19,6 +19,8 @@ Old style 'table' of contents:
 |
 +-- build_drawables - build drawables in different resolutions, using SVG inputs + inkscape
 |
++-- file_explorer - an ADB based file explorer. Useful for Honeycomb systems without massive storage mode.
+|
 +-- replay - reproduce recorded GPS tracks from a KML file for Android emulator (via telnet, etc)
 |
 + audio
@@ -35,6 +37,8 @@ Old style 'table' of contents:
 |
 + gimp
 |
++-- antigor - an old pictures plug-in (still WIP / Work In Progress)
+|
 +-- generate_bitmap_font - gimp plug-in
 |
 + psp
@@ -42,6 +46,8 @@ Old style 'table' of contents:
 +-- log_buttons - dump button presses and other events (uses SDL)
 |
 + utils
+|
++-- benetgearfix - script for fixing Be+Netgear DHCP lease issues
 |
 +-- filesystem_manipulation
 |
@@ -51,13 +57,15 @@ Old style 'table' of contents:
 |
 +-- image_convert - image conversions. Currently only png2jpg, more to come I guess...
 |
++-- netreconnect - script for forcing Ubuntu systems to reconnect to the network if they're not.
+|
 +-- screenshots - take periodical screenshots of your desktop
 |
 +-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
 |
 + web
 |
-+-- fix_entities - converts (some) html entities to its UTF8 counterparts
++-- fix_entities - converts (some) html entities to their UTF8 counterparts
 |
 +-- scrapping
 |

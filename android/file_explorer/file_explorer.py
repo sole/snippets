@@ -1,4 +1,9 @@
-import os, subprocess, argparse, time
+import os
+import subprocess
+import argparse
+import time
+import sys
+import re
 
 """
 
@@ -8,17 +13,20 @@ file_explorer --copy_from_computer ./local_files --copy_to_device /mnt/sdcard/de
 
 """
 
-
 def parse_args():
 
 	parser = argparse.ArgumentParser(description='Read/write files from/to Android devices via ADB')
 
-	parser.add_argument('--adb', help="Location of adb binary", default='adb')
-	parser.add_argument('--device_list', help="List device files", default=False)
-	parser.add_argument('--copy_from_device', help='Copy a file (or directory) from the device', default=False)
-	parser.add_argument('--copy_to_host', help='When used with --copy_from_device, specifies where to copy files', default='.')
-	parser.add_argument('--copy_from_host', help='Copy a file (or directory) from the host to the device', default=False)
-	parser.add_argument('--copy_to_device', help='When used with --copy_from_host, specifies where to copy files', default='.')
+	parser.add_argument('--adb', help="Location of adb binary", default='adb', metavar='/path/to/the/adb/executable')
+	parser.add_argument('--device-list', help="List device files in dir", default=False, dest='device_list', metavar='/path/to/dir/in/device')
+	parser.add_argument('--copy-from-device', help='Copy a file (or directory) from the device', default=False, metavar='/path/to/source/in/device', dest='copy_from_device')
+	parser.add_argument('--copy-to-host', help='When used with --copy_from_device, specifies where to copy files', default='.', metavar='/path/to/destination/in/host', dest='copy_to_host')
+	parser.add_argument('--copy-from-host', help='Copy a file (or directory) from the host to the device', default=False, metavar='/path/to/source/in/host', dest='copy_from_host')
+	parser.add_argument('--copy-to-device', help='When used with --copy_from_host, specifies where to copy files', default='.', metavar='/path/to/destination/in/device')
+
+	if len(sys.argv) == 1:
+		parser.print_help()
+		
 
 	return parser.parse_args()
 
@@ -41,7 +49,7 @@ def execute(command):
 
 def device_list(adb, device_dir):
 
-	command = "%s shell ls -l %s" % (adb, device_dir)
+	command = '%s shell ls -la "%s"' % (adb, device_dir)
 	lines = execute(command)
 	return lines
 
@@ -49,26 +57,28 @@ def device_list(adb, device_dir):
 def parse_device_list(lines):
 
 	entries = {}
+	pattern = re.compile(r"^(?P<permissions>[drwx\-]+) (?P<owner>\w+)\W+(?P<group>[\w_]+)\W*(?P<size>\d+)?\W+(?P<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}) (?P<name>.+)$")
 
 	for line in lines:
 		line = line.rstrip()
+		match = pattern.match(line)
+		
+		if match:
+			permissions = match.group('permissions')
+			owner = match.group('owner')
+			group = match.group('group')
+			fsize = match.group('size')
+			if fsize is None:
+				fsize = 0
+			filename = match.group('name')
+			timestamp = time.mktime((time.strptime(match.group('datetime'), "%Y-%m-%d %H:%M")))
+			
+			is_directory = permissions.startswith('d')
 
-		parts = line.split(None, 6)
+			entries[filename] = { 'is_directory': is_directory, 'size': fsize, 'timestamp': timestamp }
 
-		if len(parts) == 6:
-			# Directories don't report their size
-			permissions, owner, group, mdate, mtime, filename = parts
-			fsize = 0
-
-		elif len(parts) == 7:
-			permissions, owner, group, fsize, mdate, mtime, filename = parts
-
-		is_directory = permissions.startswith('d')
-		timestamp = time.mktime((time.strptime(mdate + ' ' + mtime, "%Y-%m-%d %H:%M")))
-
-		entries[filename] = { 'is_directory': is_directory, 'size': fsize, 'timestamp': timestamp }
-
-
+		else:
+			print "NOT MATCHED!!!!"
 
 	return entries
 
@@ -119,6 +129,10 @@ def action_copy_from_device(adb, device_file, host_directory):
 		command = '%s pull "%s" "%s"' % (adb, device_file, host_file)
 		execute(command)
 
+def action_device_make_directory(adb, device_directory):
+	command = '%s shell mkdir "%s" ' % (adb, device_directory )
+	execute(command)
+
 def action_copy_from_host(adb, host_file, device_directory):
 	print "-------"
 	print "COPY FROM HOST:", host_file, "=>", device_directory
@@ -138,9 +152,7 @@ def action_copy_from_host(adb, host_file, device_directory):
 
 	if not parent_device_entries.has_key(dst_basename):
 		print "hop", dst_basename, dst_parent_dir
-		command = '%s shell mkdir "%s" ' % (adb, device_directory )
-		execute(command)
-
+		self.action_device_make_directory(adb, device_directory)
 	elif not parent_device_entries[dst_basename]['is_directory']:
 		print "ERROR", device_directory, "is a file, not a directory"
 		return
@@ -166,6 +178,25 @@ def action_copy_from_host(adb, host_file, device_directory):
 
 		for entry in entries:
 			action_copy_from_host(adb, os.path.join(host_file, entry), os.path.join(device_directory, os.path.basename(host_file)))
+
+def action_device_delete_item(adb, path):
+	print 'deleting', path
+
+	if is_device_file_a_directory(adb, path):
+		entries = parse_device_list(device_list(adb, path))
+
+		for filename, entry in entries.iteritems():
+
+			entry_full_path = os.path.join(path, filename)
+			action_device_delete_item(adb, entry_full_path)
+
+		# finally delete the directory itself
+		command = '%s shell rmdir "%s"' % (adb, path)
+		execute(command)
+
+	else:
+		print "would delete", path, 'because its a file'
+		execute('%s shell rm "%s"' % (adb, path))
 
 # ~~~
 
