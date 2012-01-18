@@ -63,6 +63,12 @@ Old style 'table' of contents:
 |
 +-- screencast2 - making desktop screencasts in Ubuntu. Capture both screen AND PulseAudio. No Jack!
 |
++ video
+|
++-- get_ffmpeg_on_macosx.sh - download latest ffmpeg sources and required libraries and compiles and installs it
+|
++-- ios_mov_to_android_mp4.sh - convert MOV files for iOS to MP4 files for Android
+|
 + web
 |
 +-- fix_entities - converts (some) html entities to their UTF8 counterparts
