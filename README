@@ -39,6 +39,8 @@ Old style 'table' of contents:
 |
 +-- antigor - an old pictures plug-in (still WIP / Work In Progress)
 |
++-- favourite_plugins - A ruby script for downloading, installing and placing underneath a sane menu entry my favourite gimp scripts for photo manipulation (hence they go under "Filters/Photo")
+|
 +-- generate_bitmap_font - gimp plug-in
 |
 + psp
